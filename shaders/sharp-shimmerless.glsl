@@ -1,15 +1,12 @@
 /*
  * sharp-bilinear
- * Author: Themaister
+ * Author: zadpos
  * License: Public domain
  * 
- * Does a bilinear stretch, with a preapplied Nx nearest-neighbor scale, giving a
- * sharper image than plain bilinear.
+ * Interpolates input pixels into output pixels by their overlapping area 
+ * in the imaginary grid of rectangular pixels, achieving sharper image
+ * than sharp-bilinear approach and no pixel shimmering.
  */
-
-// Parameter lines go here:
-#pragma parameter SHARP_BILINEAR_PRE_SCALE "Sharp Bilinear Prescale" 4.0 1.0 10.0 1.0
-#pragma parameter AUTO_PRESCALE "Automatic Prescale" 1.0 0.0 1.0 1.0
 
 #if defined(VERTEX)
 
@@ -41,11 +38,6 @@ uniform COMPAT_PRECISION int FrameCount;
 uniform COMPAT_PRECISION vec2 OutputSize;
 uniform COMPAT_PRECISION vec2 TextureSize;
 uniform COMPAT_PRECISION vec2 InputSize;
-
-// vertex compatibility #defines
-#define vTexCoord TEX0.xy
-#define SourceSize vec4(TextureSize, 1.0 / TextureSize) //either TextureSize or InputSize
-#define outsize vec4(OutputSize, 1.0 / OutputSize)
 
 void main()
 {
