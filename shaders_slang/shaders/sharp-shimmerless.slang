@@ -14,13 +14,14 @@ layout(std140, set = 0, binding = 0) uniform UBO
 } global;
 
 /*
- * sharp-bilinear
+ * sharp-shimmerless
  * Author: zadpos
  * License: Public domain
  * 
- * Interpolates input pixels into output pixels by their overlapping area 
- * in the imaginary grid of rectangular pixels, achieving sharper image
- * than sharp-bilinear approach and no pixel shimmering.
+ * A retro gaming shader for sharpest pixels with no aliasing/shimmering.
+ * Instead of pixels as point samples, this shader considers pixels as
+ * ideal rectangles forming a grid, and interpolates pixel by calculating
+ * the surface area an input pixel would occupy on an output pixel.
  */
 
 #pragma stage vertex

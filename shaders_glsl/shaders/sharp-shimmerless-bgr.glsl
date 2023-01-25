@@ -1,12 +1,9 @@
 /*
- * sharp-shimmerless
+ * sharp-shimmerless-bgr
  * Author: zadpos
  * License: Public domain
  * 
- * A retro gaming shader for sharpest pixels with no aliasing/shimmering.
- * Instead of pixels as point samples, this shader considers pixels as
- * ideal rectangles forming a grid, and interpolates pixel by calculating
- * the surface area an input pixel would occupy on an output pixel.
+ * Sharp-Shimmerless shader for BGR subpixels
  */
 
 #if defined(VERTEX)
@@ -80,32 +77,50 @@ COMPAT_VARYING vec4 TEX0;
 
 void main()
 {
-    vec2 pixel = TEX0.xy * OutputSize * TextureSize / InputSize;
-    vec2 pixel_floored = floor(pixel);
-    vec2 pixel_ceiled = ceil(pixel);
-    vec2 scale = OutputSize / InputSize.xy;
-    vec2 invscale = InputSize.xy / OutputSize;
-    vec2 texel_floored = floor(invscale * pixel_floored);
-    vec2 texel_ceiled = floor(invscale * pixel_ceiled);
+    vec2 pixel_xy = TEX0.xy * OutputSize * TextureSize / InputSize;
+    vec4 pixel_floored, pixel_ceiled;
+    pixel_floored = floor(pixel_xy).xxxy;
+    pixel_floored.x -= 0.33;
+    pixel_floored.z += 0.33;
+    pixel_ceiled = ceil(pixel_xy).xxxy;
+    pixel_ceiled.x -= 0.33;
+    pixel_ceiled.z += 0.33;
 
-    vec2 mod_texel;
+    vec4 scale = OutputSize.xxxy / InputSize.xxxy;
+    vec4 invscale = InputSize.xxxy / OutputSize.xxxy;
+
+    vec4 texel_floored = floor(invscale * pixel_floored);
+    vec4 texel_ceiled = floor(invscale * pixel_ceiled);
+
+    vec4 mod_texel;
 
     if (texel_floored.x == texel_ceiled.x) {
-        // The square-pixel lies "completely in" a single column of square-texel
         mod_texel.x = texel_ceiled.x + 0.5;
     } else {
-        // The square-pixel lies across two neighboring columns and must be interpolated
         mod_texel.x = texel_ceiled.x + 0.5 - (scale.x * texel_ceiled.x - pixel_floored.x);
     }
 
     if (texel_floored.y == texel_ceiled.y) {
-        // The square-pixel lies "completely in" a single row of square-texel
         mod_texel.y = texel_ceiled.y + 0.5;   
     } else {
-        // The square-pixel lies across two neighboring rows and must be interpolated
         mod_texel.y = texel_ceiled.y + 0.5 - (scale.y * texel_ceiled.y - pixel_floored.y);
     }
 
-    FragColor = vec4(COMPAT_TEXTURE(Texture, mod_texel / TextureSize).rgb, 1.0);
+    if (texel_floored.z == texel_ceiled.z) {
+        mod_texel.z = texel_ceiled.z + 0.5;   
+    } else {
+        mod_texel.z = texel_ceiled.z + 0.5 - (scale.z * texel_ceiled.z - pixel_floored.z);
+    }
+
+    if (texel_floored.w == texel_ceiled.w) {
+        mod_texel.w = texel_ceiled.w + 0.5;   
+    } else {
+        mod_texel.w = texel_ceiled.w + 0.5 - (scale.w * texel_ceiled.w - pixel_floored.w);
+    }
+
+    FragColor.b = COMPAT_TEXTURE(Texture, mod_texel.xw / TextureSize).b;
+    FragColor.g = COMPAT_TEXTURE(Texture, mod_texel.yw / TextureSize).g;
+    FragColor.r = COMPAT_TEXTURE(Texture, mod_texel.zw / TextureSize).r;
+    FragColor.a = 1.0;
 } 
 #endif
