@@ -39,7 +39,7 @@ However, when the screen starts to scroll, you can notice vertical lines on the 
 
 It is a fundamental limitation for any kind of point sampling approach that it treats each pixel as a point with position but no area, whereas in retro gaming we want rectangular pixels.
 
-## Interpolating Pixels as Rectangles
+## A Box Filter
 Sharp-Shimmerless shader does not do any kind of point sampling, and instead treats input and output pixels as ideal rectangles, occupying each of their area on the grid that is screen.
 
 It interpolates pixels based on how much area an input pixel would occupy on an output pixel.
@@ -51,3 +51,5 @@ Hence, it achieves both minimal number of interpolated pixels and ideal anti ali
 ### Subpixel Shaders
 *rgb* and *bgr* shaders are for horizontal subpixel layouts, and *vrgb* and *vbgr* shaders are for vertical subpixel layouts.
 It supports subpixel rendering by offsetting positions of output pixels per each color.
+
+Subpixel shaders need to sample input pixels three times per output pixel, and this could make them significantly slower than the basic shader.
