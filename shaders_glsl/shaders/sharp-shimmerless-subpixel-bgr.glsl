@@ -96,7 +96,7 @@ void main()
     vec4 texel_tl = floor(invscale * pixel_tl);
     vec4 texel_br = floor(invscale * pixel_br);
 
-    vec4 mod_texel = texel_br + vec2(0.5, 0.5);
+    vec4 mod_texel = texel_br + vec4(0.5, 0.5, 0.5, 0.5);
     mod_texel -= (vec4(1.0, 1.0, 1.0, 1.0) - step(texel_br, texel_tl)) * (scale * texel_br - pixel_tl);
 
     FragColor.b = COMPAT_TEXTURE(Texture, mod_texel.xw / TextureSize).b;

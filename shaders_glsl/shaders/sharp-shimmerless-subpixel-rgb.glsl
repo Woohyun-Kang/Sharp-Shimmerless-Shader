@@ -46,9 +46,9 @@ void main()
     vec2 scale_xy = OutputSize / InputSize;
     vec2 invscale_xy = InputSize / OutputSize;
     
-    pixel = pixel_xy.xyyy;
-    scale = scale_xy.xyyy;
-    invscale = invscale_xy.xyyy;
+    pixel = pixel_xy.xxxy;
+    scale = scale_xy.xxxy;
+    invscale = invscale_xy.xxxy;
 }
 
 #elif defined(FRAGMENT)
@@ -95,13 +95,13 @@ void main()
 
     vec4 texel_tl = floor(invscale * pixel_tl);
     vec4 texel_br = floor(invscale * pixel_br);
-    
-    vec4 mod_texel = texel_br + vec2(0.5, 0.5);
+
+    vec4 mod_texel = texel_br + vec4(0.5, 0.5, 0.5, 0.5);
     mod_texel -= (vec4(1.0, 1.0, 1.0, 1.0) - step(texel_br, texel_tl)) * (scale * texel_br - pixel_tl);
 
-    FragColor.r = COMPAT_TEXTURE(Texture, mod_texel.xy / TextureSize).r;
-    FragColor.g = COMPAT_TEXTURE(Texture, mod_texel.xz / TextureSize).g;
-    FragColor.b = COMPAT_TEXTURE(Texture, mod_texel.xw / TextureSize).b;
+    FragColor.r = COMPAT_TEXTURE(Texture, mod_texel.xw / TextureSize).r;
+    FragColor.g = COMPAT_TEXTURE(Texture, mod_texel.yw / TextureSize).g;
+    FragColor.b = COMPAT_TEXTURE(Texture, mod_texel.zw / TextureSize).b;
     FragColor.a = 1.0;
 } 
 #endif
