@@ -86,20 +86,18 @@ COMPAT_VARYING vec4 invscale;
 
 void main()
 {
-    vec4 pixel_floored = floor(pixel);
-    pixel_floored.y -= 0.33;
-    pixel_floored.w += 0.33;
-    vec4 pixel_ceiled = ceil(pixel);
-    pixel_ceiled.y -= 0.33;
-    pixel_ceiled.w += 0.33;
+    vec4 pixel_tl = floor(pixel);
+    pixel_tl.y -= 0.33;
+    pixel_tl.w += 0.33;
+    vec4 pixel_br = ceil(pixel);
+    pixel_br.y -= 0.33;
+    pixel_br.w += 0.33;
 
-    vec4 texel_floored = floor(invscale * pixel_floored);
-    vec4 texel_ceiled = floor(invscale * pixel_ceiled);
+    vec4 texel_tl = floor(invscale * pixel_tl);
+    vec4 texel_br = floor(invscale * pixel_br);
 
-    vec4 mod_texel;
-
-    mod_texel = texel_ceiled + 0.5 - scale * texel_ceiled + pixel_floored;
-    mod_texel = mix(mod_texel, texel_ceiled + 0.5, step(texel_ceiled, texel_floored));
+    vec4 mod_texel = texel_br + vec2(0.5, 0.5);
+    mod_texel -= (vec4(1.0, 1.0, 1.0, 1.0) - step(texel_br, texel_tl)) * (scale * texel_br - pixel_tl);
 
     FragColor.b = COMPAT_TEXTURE(Texture, mod_texel.xy / TextureSize).b;
     FragColor.g = COMPAT_TEXTURE(Texture, mod_texel.xz / TextureSize).g;
