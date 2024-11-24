@@ -48,8 +48,21 @@ It interpolates pixels based on how much area an input pixel would occupy on an 
 
 Hence, it achieves both minimal number of interpolated pixels and ideal anti aliasing, i.e. **NO SHIMMERING**!
 
+### Curvature Shaders
+Applies CRT-like curvature.
+`-curvature-grid` and `curvature-scanlines` versions combines curvature and grid/scanline effects.
+
+### Grid/Scanlines Shaders
+Applies grid or scanline effect.
+`-curvature-grid` and `curvature-scanlines` versions combines curvature and grid/scanline effects.
+
 ### Subpixel Shaders
-*rgb* and *bgr* shaders are for horizontal subpixel layouts, and *vrgb* and *vbgr* shaders are for vertical subpixel layouts.
+`-rgb` and `-bgr` versions are for horizontal subpixel layouts, and `-vrgb` and `-vbgr` versions are for vertical subpixel layouts.
 It supports subpixel rendering by offsetting positions of output pixels per each color.
 
 Subpixel shaders need to sample input pixels three times per output pixel, and this could make them significantly slower than the basic shader.
+
+### Gamma Corrected Shader
+This is the ideal way, but it requires four texture sampling per output pixel, making it slow.
+
+All other versions leverage OpenGL bilinear filtering to interpolate colors in linear space in a single texture sampling.
