@@ -13,10 +13,11 @@
  */
 
 #pragma parameter CURVATURE "Curvature" 0.1 0.0 1.00 0.01
-#pragma parameter GRID_RATIO_X "Grid Thickness" 0.3 0.0 1.00 0.05
-#pragma parameter GRID_RATIO_Y "Scanline Thickness" 0.3 0.0 1.0 0.05
-#pragma parameter GRID_OPACITY_X "Grid Opacity" 0.3 0.0 1.0 0.05
-#pragma parameter GRID_OPACITY_Y "Scanline Opacity" 0.3 0.0 1.0 0.05
+// Parameter resolution: 0.01, updated per suggestion from SirPrimalform
+#pragma parameter GRID_RATIO_Y "Gridline Thickness (Horizontal)" 0.3 0.0 1.0 0.01
+#pragma parameter GRID_RATIO_X "Gridline Thickness (Vertical)" 0.3 0.0 1.00 0.01
+#pragma parameter GRID_OPACITY_Y "Gridline Opacity (Horizontal)" 0.3 0.0 1.0 0.01
+#pragma parameter GRID_OPACITY_X "Gridline Opacity (Vertical)" 0.3 0.0 1.0 0.01
 
 #if defined(VERTEX)
 
@@ -143,8 +144,12 @@ void main()
     vec2 scanline_factor = (fract(pixel_br) + clamp(grid_ratio - fract(pixel_tl), 0.0, 1.0)) / invscale;
     scanline_factor = mix(scanline_factor, grid_ratio / invscale, step(grid_ratio, fract(pixel_br)));
     scanline_factor = mix(scanline_factor, clamp((grid_ratio - fract(pixel_tl)) / invscale, 0.0, 1.0), step(texel_br, texel_tl));
-    scanline_factor = grid_alpha + (1.0 - grid_alpha) * scanline_factor;
-    float factor = scanline_factor.x * scanline_factor.y;
+    scanline_factor = grid_alpha + (vec2(1.0, 1.0) - grid_alpha) * scanline_factor;
+
+    // smooth out the border and prevent garbage from out of bounds
+    vec2 border_factor = clamp(pixel, 0.0, 1.0) * clamp(OutputSize - pixel, 0.0, 1.0);
+    
+    float factor = scanline_factor.x * scanline_factor.y * border_factor.x * border_factor.y;
 
     vec2 mod_texel = texel_br - vec2(0.5, 0.5) + interp_ratio;
 

@@ -12,10 +12,11 @@
  * with adjustable grid (vertical) and scanline (horizontal) thickness and opacity.
  */
 
-#pragma parameter GRID_RATIO_X "Grid Thickness" 0.3 0.0 1.00 0.05
-#pragma parameter GRID_RATIO_Y "Scanline Thickness" 0.3 0.0 1.0 0.05
-#pragma parameter GRID_OPACITY_X "Grid Opacity" 0.3 0.0 1.0 0.05
-#pragma parameter GRID_OPACITY_Y "Scanline Opacity" 0.3 0.0 1.0 0.05
+// Parameter resolution: 0.01, updated per suggestion from SirPrimalform
+#pragma parameter GRID_RATIO_Y "Scanline Thickness" 0.3 0.0 1.0 0.01
+#define GRID_RATIO_X 0.0
+#pragma parameter GRID_OPACITY_Y "Scanline Opacity" 0.3 0.0 1.0 0.01
+#define GRID_OPACITY_X 0.0
 
 #if defined(VERTEX)
 
@@ -92,14 +93,10 @@ COMPAT_VARYING vec2 invscale;
 
 #ifdef PARAMETER_UNIFORM
 // All parameter floats need to have COMPAT_PRECISION in front of them
-uniform COMPAT_PRECISION float GRID_RATIO_X;
 uniform COMPAT_PRECISION float GRID_RATIO_Y;
-uniform COMPAT_PRECISION float GRID_OPACITY_X;
 uniform COMPAT_PRECISION float GRID_OPACITY_Y;
 #else
-#define GRID_RATIO_X 0.3
 #define GRID_RATIO_Y 0.3
-#define GRID_OPACITY_X 0.3
 #define GRID_OPACITY_Y 0.3
 #endif
 
