@@ -87,11 +87,11 @@ COMPAT_VARYING vec4 invscale;
 void main()
 {
     vec4 pixel_tl = floor(pixel);
-    pixel_tl.y -= 0.33;
-    pixel_tl.w += 0.33;
+    pixel_tl.x -= 0.33;
+    pixel_tl.z += 0.33;
     vec4 pixel_br = ceil(pixel);
-    pixel_br.y -= 0.33;
-    pixel_br.w += 0.33;
+    pixel_br.x -= 0.33;
+    pixel_br.z += 0.33;
 
     vec4 texel_tl = floor(invscale * pixel_tl);
     vec4 texel_br = floor(invscale * pixel_br);
